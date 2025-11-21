@@ -8,21 +8,24 @@
  */
 
 function transformStateWithClones(state, actions) {
-  const copy = { ...state };
+  const stateCopy = { ...state };
   const stateHistory = [];
 
   for (const action of actions) {
     switch (action.type) {
       case 'addProperties':
-        addProperties(copy, action.extraData, stateHistory);
+        addProperties(stateCopy, action.extraData, stateHistory);
         break;
 
       case 'removeProperties':
-        removeProperties(copy, action.keysToRemove, stateHistory);
+        removeProperties(stateCopy, action.keysToRemove, stateHistory);
         break;
 
       case 'clear':
-        clearProperties(copy, stateHistory);
+        clearProperties(stateCopy, stateHistory);
+        break;
+
+      default:
         break;
     }
   }
@@ -30,28 +33,27 @@ function transformStateWithClones(state, actions) {
   return stateHistory;
 }
 
-function addProperties(copy, extraData, stateHistory) {
+function addProperties(stateCopy, extraData, stateHistory) {
   for (const key in extraData) {
-    copy[key] = extraData[key];
+    stateCopy[key] = extraData[key];
   }
 
-  return stateHistory.push({ ...copy });
+  stateHistory.push({ ...stateCopy });
 }
 
-function removeProperties(copy, keysToRemove, stateHistory) {
+function removeProperties(stateCopy, keysToRemove, stateHistory) {
   for (const key of keysToRemove) {
-    delete copy[key];
+    delete stateCopy[key];
   }
 
-  return stateHistory.push({ ...copy });
+  stateHistory.push({ ...stateCopy });
 }
 
-function clearProperties(copy, stateHistory) {
-  for (const key in copy) {
-    delete copy[key];
+function clearProperties(stateCopy, stateHistory) {
+  for (const key in stateCopy) {
+    delete stateCopy[key];
   }
-
-  return stateHistory.push({ ...copy });
+  stateHistory.push({ ...stateCopy });
 }
 
 module.exports = transformStateWithClones;
